@@ -21,8 +21,6 @@ public class AssetLoader {
 		button = new Texture(Gdx.files.internal("button.png"));
 		button_pressed = new Texture(Gdx.files.internal("button_pressed.png"));
 		console = new Texture(Gdx.files.internal("console.png"));
-		bulga = new Texture(Gdx.files.internal("bulga.png"));
-		magalli = new Texture(Gdx.files.internal("magalli.png"));
 		
 		dice = new Array<Texture>();
 		dice.add(new Texture(Gdx.files.internal("die1.png")));

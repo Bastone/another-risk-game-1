@@ -51,7 +51,7 @@ public class Button {
 	
 	public void disable() {
 		enabled = false;
-		sprite.setTexture(AssetLoader.magalli);
+		sprite.setTexture(AssetLoader.button);
 	}
 	
 	public boolean isEnabled() {

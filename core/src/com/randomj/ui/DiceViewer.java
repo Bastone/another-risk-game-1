@@ -23,7 +23,7 @@ public class DiceViewer {
 		defenderSprites = new ArrayList<Sprite>(3);
 		
 		for (int i = 2; i >= 0; i--) {
-			Sprite sprite = new Sprite(AssetLoader.magalli);
+			Sprite sprite = new Sprite(AssetLoader.dice.get(0));
 			sprite.setSize(screenWidth/30, screenWidth/30);
 			sprite.setPosition(screenWidth/2 - sprite.getWidth()*2, screenHeight/2 + (sprite.getHeight() + 10) * i);
 			sprite.setColor(Color.BLUE);
@@ -31,7 +31,7 @@ public class DiceViewer {
 		}
 		
 		for (int i = 2; i >= 0; i--) {
-			Sprite sprite = new Sprite(AssetLoader.magalli);
+			Sprite sprite = new Sprite(AssetLoader.dice.get(0));
 			sprite.setSize(screenWidth/30, screenWidth/30);
 			sprite.setPosition(screenWidth/2 + sprite.getWidth()*2, screenHeight/2 + (sprite.getHeight() + 10) * i);
 			sprite.setColor(Color.RED);
@@ -82,7 +82,6 @@ public class DiceViewer {
 	}
 	
 	public void reset() {
-		visible = false;
 		animation = false;
 		count = 0;
 		timelapse = 0;
