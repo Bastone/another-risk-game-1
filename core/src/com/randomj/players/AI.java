@@ -1,7 +1,5 @@
 package com.randomj.players;
 
-import com.badlogic.gdx.graphics.Color;
-import com.randomj.gameobjects.Enums;
 import com.randomj.gameobjects.Enums.AIType;
 
 public class AI extends Player {

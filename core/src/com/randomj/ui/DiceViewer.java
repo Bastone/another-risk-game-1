@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.randomj.gameobjects.Dice;
 import com.randomj.helpers.AssetLoader;
 
@@ -41,16 +40,16 @@ public class DiceViewer {
 		reset();
 	}
 	
-	public void draw(SpriteBatch batch, float delta) {	
+	public void draw(SpriteBatch batch, float delta) {
 		if(visible) {
 			if (animation) {		
 				timelapse += delta;
 				if(timelapse < 1.0){
 					if(count == 2){	
-						for (Sprite sprite: attackerSprites)
-							sprite.setTexture(AssetLoader.dice.get(MathUtils.random(5)));
-						for (Sprite sprite: defenderSprites)
-							sprite.setTexture(AssetLoader.dice.get(MathUtils.random(5)));
+						for (int i = 0; i < dice.getAttackerDice().size(); i++)
+							attackerSprites.get(i).setTexture(AssetLoader.dice.get(MathUtils.random(5)));
+						for (int i = 0; i < dice.getDefenderDice().size(); i++)
+							defenderSprites.get(i).setTexture(AssetLoader.dice.get(MathUtils.random(5)));
 						count = 0;
 					}
 					else count++;				
@@ -61,13 +60,13 @@ public class DiceViewer {
 				for (int i = 0; i < dice.getAttackerDice().size(); i++)
 					attackerSprites.get(i).setTexture(AssetLoader.dice.get(dice.getAttackerDice().get(i) - 1));
 				for (int i = 0; i < dice.getDefenderDice().size(); i++)
-					attackerSprites.get(i).setTexture(AssetLoader.dice.get(dice.getDefenderDice().get(i) - 1));
+					defenderSprites.get(i).setTexture(AssetLoader.dice.get(dice.getDefenderDice().get(i) - 1));
 			}
 			
-			for (Sprite sprite: defenderSprites)
-				sprite.draw(batch);
-			for (Sprite sprite: attackerSprites)
-				sprite.draw(batch);
+			for (int i = 0; i < dice.getAttackerDice().size(); i++)
+				attackerSprites.get(i).draw(batch);
+			for (int i = 0; i < dice.getDefenderDice().size(); i++)
+				defenderSprites.get(i).draw(batch);
 		}
 	}
 		
@@ -93,5 +92,9 @@ public class DiceViewer {
 
 	public boolean isVisible() {
 		return visible;
+	}
+
+	public boolean animationIsPlaying() {
+		return animation;
 	}
 }

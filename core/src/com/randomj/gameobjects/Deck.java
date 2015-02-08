@@ -20,25 +20,24 @@ public class Deck {
 		init(countries);		
 	}
 	
-	public void init(ArrayList<Country> countries) {
+	public void init(ArrayList<Country> countries) { // Artillery, infantry and cavalry patterns: 001 010 100
 		Set<CardType> types = EnumSet.allOf(CardType.class);
 		Iterator<CardType> iterator = types.iterator();
 		CardType type;
+		int i = 0;
 		for (Country country: countries) {
 			type = iterator.next();
+			i++;
 			if (type == CardType.WILD_CARD) {
 				iterator = types.iterator();
 				type = iterator.next();
+				i = 0;
 			}
-			cards.add(new Card(type, country));	
+			cards.add(new Card(type, country, (int)Math.pow(2, i))); 
 		}
-		cards.add(new Card(CardType.WILD_CARD, null));
-		cards.add(new Card(CardType.WILD_CARD, null));
+		cards.add(new Card(CardType.WILD_CARD, null, 7)); // Wild card pattern: 111
+		cards.add(new Card(CardType.WILD_CARD, null, 7));
 		
-		shuffle();
-	}
-
-	public void shuffle() {
 		Collections.shuffle(cards);
 	}
 	

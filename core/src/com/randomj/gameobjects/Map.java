@@ -3,8 +3,6 @@ package com.randomj.gameobjects;
 
 import java.util.ArrayList;
 
-import com.randomj.helpers.AssetLoader;
-
 public class Map {
 
 	private ArrayList<Country> countries;

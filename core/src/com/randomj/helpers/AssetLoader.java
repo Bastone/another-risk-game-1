@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class AssetLoader { 
 
-	public static Texture map, button, button_pressed, console, bulga, magalli;
+	public static Texture map, button, button_pressed, console, slot, slot_value;
 	public static Array<Texture> dice;
 	public static Texture infantry, artillery, cavalry, wild_card;
 	public static Pixmap mapColors; 
@@ -34,19 +34,23 @@ public class AssetLoader {
 		cavalry = new Texture(Gdx.files.internal("cavalry.png"));
 		artillery = new Texture(Gdx.files.internal("artillery.png"));
 		wild_card = new Texture(Gdx.files.internal("wild_card.png"));
+		
+		slot = new Texture(Gdx.files.internal("slot.png"));
+		slot_value = new Texture(Gdx.files.internal("slot_value.png"));
 	}
 	
 	public static void dispose() { 
 		map.dispose();	
 		button.dispose();
 		console.dispose();
-		bulga.dispose();
-		magalli.dispose();
 		
 		infantry.dispose();
 		cavalry.dispose();
 		artillery.dispose();
 		wild_card.dispose();
+		
+		slot.dispose();
+		slot_value.dispose();
 	}
 
 }

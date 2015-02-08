@@ -3,7 +3,6 @@ package com.randomj.net;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -39,10 +38,8 @@ public class GameServer {
 						System.out.println("lobby " + lobby.getId() + " creata");
 					} else
 						lobby = lobbies.get(lobbies.size() - 1);  
-					
-					
+								
 					player.setID();
-					player.setColor(lobby.pickColor());
 					lobby.addClient(connection.getID(), player);
 					connection.sendTCP(player);
 					if (lobby.isFull())

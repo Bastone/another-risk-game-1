@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.Array;
 import com.randomj.players.Player;
 
 public class Country {
@@ -44,8 +43,12 @@ public class Country {
 		owner = null;
 	}
 	
-	public void addUnits(int n) {
-		units += n;
+	public void addUnits(int amount) {
+		units += amount;
+	}
+
+	public void loseUnits(int amount) {
+		units -= amount;
 	}
 	
 	public boolean isFree() {
@@ -107,5 +110,4 @@ public class Country {
 	public String toString() {
 		return name + " has " + units + " units";
 	}
-
 }

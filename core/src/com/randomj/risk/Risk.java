@@ -23,13 +23,6 @@ public class Risk extends Game {
 		players.add(new Human("Eugeniugolo"));
 		players.add(new Human("Adolfride"));
 		
-		// Carte di prova
-//		players.get(0).addCard(new Card(CardType.WILD_CARD, null));
-//		players.get(0).addCard(new Card(CardType.WILD_CARD, null));
-//		players.get(0).addCard(new Card(CardType.WILD_CARD, null));
-//		players.get(0).addCard(new Card(CardType.WILD_CARD, null));
-//		players.get(0).addCard(new Card(CardType.WILD_CARD, null));
-		
 		PlayerClient me = new PlayerClient(players.get(0), "127.0.0.1");
 //		PlayerClient me = new PlayerClient(players.get(1), "127.0.0.1");
 //		PlayerClient me = new PlayerClient(players.get(2), "127.0.0.1");

@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.utils.Array;
 import com.randomj.gameobjects.Country;
+import com.randomj.gameobjects.GameInstance;
 import com.randomj.gameobjects.Map;
 import com.randomj.net.PlayerClient;
 import com.randomj.ui.Button;
@@ -48,11 +48,11 @@ public class GameRenderer {
 		cardsButton = new Button(BUTTON_MARGIN, BUTTON_MARGIN, xDiv - BUTTON_MARGIN * 2, yDiv - BUTTON_MARGIN * 2, TEXT_PADDING);
 		cardsButton.setText("Cards");
 		nextButton = new Button(xDiv * 6 + BUTTON_MARGIN, BUTTON_MARGIN, xDiv - BUTTON_MARGIN * 2, yDiv - BUTTON_MARGIN * 2, TEXT_PADDING);
-		nextButton.setText("Prova");
+		nextButton.setText("Waiting");
+		nextButton.disable();
 		
 		// Cards
 		cardsViewer = new CardsViewer(xDiv, yDiv, CARDS_MARGIN);
-		cardsViewer.update(client.getPlayer());
 
 		// Dice
 		diceViewer = new DiceViewer(screenWidth, screenHeight);
@@ -79,9 +79,10 @@ public class GameRenderer {
 			font.draw(batch, country.getUnits() +  "", country.getX() - 2, country.getY() + 5);	
 		batch.end();
 	}
-	
+
 	public void renderUI(SpriteBatch batch, float delta) {
-		ArrayList<String> log = client.getInstance().getLastLogs();
+		GameInstance game = client.getInstance();
+		ArrayList<String> log = game.getLastLogs();
 		
 	    batch.begin();
 	    
@@ -90,8 +91,9 @@ public class GameRenderer {
 	    for (int i = 0; i < log.size(); i++)
 	    	font.draw(batch, log.get(i), consoleSprite.getX() + TEXT_PADDING, consoleSprite.getY() + TEXT_PADDING + TEXT_GAP * i);
 	    
-		// Buttons
+		// Buttons	    
 	    cardsButton.draw(batch, font);
+	    setNextButton(game);
 	    nextButton.draw(batch, font);
 	    
 	    // Cards    
@@ -103,7 +105,67 @@ public class GameRenderer {
 	    batch.end();
 		
 	}
-
+	
+	public void setNextButton(GameInstance game) {
+		if (client.itsYourTurn()) {
+			switch (game.getPhase()) {
+			
+			case REINFORCEMENT:
+				// If player runs out of units
+				if (game.getCurrentPlayer().getUnits() == 0) {
+					nextButton.setText("Go to attack phase");
+					nextButton.enable();
+				} else 
+					nextButton.setText("Placing " + game.getCurrentPlayer().getUnits() + " more units");
+				break;
+				
+			case ATTACK_PHASE:
+				switch (game.getSubPhase()) {
+				
+				case SELECTION:
+					nextButton.setText("Go to fortify phase");
+					nextButton.enable();
+					break;
+				
+				case TARGETING:
+					nextButton.setText("Choose a target");
+					nextButton.disable();
+					break;
+				
+				case ATTACKING:
+					nextButton.setText("Attack!");
+					nextButton.enable();
+					break;
+				
+				case MOVING_UNITS:
+					nextButton.setText("Ok");
+					nextButton.enable();
+					break;
+				}
+				break;
+				
+			case FORTIFYING:
+				switch (game.getSubPhase()) {
+				
+				case TARGETING:
+					nextButton.setText("Choose another country");
+					nextButton.disable();
+					break;			
+				default:
+					nextButton.setText("End turn");
+					nextButton.enable();
+					break;
+				}
+			
+			default:
+				break;
+			}
+		} else {
+			nextButton.setText("Waiting for opponent");
+			nextButton.disable();
+		}
+	}
+	    
 	public Button getCardsButton() {
 		return cardsButton;
 	}
@@ -119,5 +181,4 @@ public class GameRenderer {
 	public DiceViewer getDiceViewer() {
 		return diceViewer;
 	}
-
 }

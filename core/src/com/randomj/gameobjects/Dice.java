@@ -3,8 +3,8 @@ package com.randomj.gameobjects;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 
 public class Dice {
 
@@ -15,27 +15,25 @@ public class Dice {
 	
 	public void roll(int nDiceAttacker, int nDiceDefender) {
 		attackerLoss = defenderLoss = 0;
-		attacker = new ArrayList<Integer>(3);
-		defender = new ArrayList<Integer>(3);
+		attacker = new ArrayList<Integer>(nDiceAttacker);
+		defender = new ArrayList<Integer>(nDiceDefender);
 		int min = Math.min(nDiceAttacker, nDiceDefender);
-
-		while (nDiceAttacker > 0) {
+		
+		for (int i = 0; i < nDiceAttacker; i++) 
 			attacker.add(MathUtils.random(1,6));
-			nDiceAttacker--;
-		}
-		while (nDiceDefender > 0) {
+		for (int i = 0; i < nDiceDefender; i++) 
 			defender.add(MathUtils.random(1,6));
-			nDiceDefender--;
-		}
-
+	
+		
 		attacker.sort(Collections.reverseOrder());
 		defender.sort(Collections.reverseOrder());
-	
+		Gdx.app.log("Sorted dice", toString());
+		
 		for (int i = 0; i < min; i++) {
 			if (attacker.get(i) > defender.get(i))
-				attackerLoss ++;
-			else
 				defenderLoss ++;
+			else
+				attackerLoss ++;
 		}
 	}
 	
@@ -53,6 +51,16 @@ public class Dice {
 	
 	public int getDefenderLoss() {
 		return defenderLoss;
+	}
+	
+	public String toString() {
+		String string = "Attacker: ";
+		for (int die: attacker)
+			string += die + " ";
+		string += " Defender:";
+		for (int die: defender)
+			string += die + " ";
+		return string;
 	}
 
 }

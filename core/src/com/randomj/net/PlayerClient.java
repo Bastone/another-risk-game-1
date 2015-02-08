@@ -27,13 +27,12 @@ public class PlayerClient {
 	    client.addListener(new Listener() {
 			public void connected (Connection connection) {
 				client.sendTCP(player);
-				Gdx.app.log("Client", "è partito " + player.getName());	
 			}
 			
 	    	public void received(Connection connection, Object object) {
 	    		if (object instanceof GameInstance) {
 	    			activeGame = (GameInstance) object;
-	    			Gdx.app.log("Client", "è arrivata l'istanza " + activeGame.toString());
+	    			player = activeGame.getPlayer(player.getID());
 	    			ready = true;
 	    			return;
 	    		}
@@ -80,5 +79,9 @@ public class PlayerClient {
 	
 	public boolean isReady() {
 		return ready;
+	}
+
+	public boolean itsYourTurn() {
+		return (player.getID() == activeGame.getCurrentPlayer().getID());
 	}
 }

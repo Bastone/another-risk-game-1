@@ -30,4 +30,8 @@ public class Continent {
 		return String.format("%-30s\t%-8d\t%42s", name, bonusUnits, Long.toBinaryString(pattern) );
 	}
 
+	public boolean contains(Country target) {
+		return ((pattern & target.getPattern()) == target.getPattern());
+	}
+
 }

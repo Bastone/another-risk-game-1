@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.randomj.gameobjects.GameInstance;
 import com.randomj.helpers.AssetLoader;
 import com.randomj.helpers.CameraHandler;
 import com.randomj.helpers.CountrySelector;
@@ -62,7 +61,7 @@ public class GameScreen implements Screen {
 		renderer = new GameRenderer(gameWidth, gameHeight, screenWidth, screenHeight, client);
 			
 		// Updater
-		updater = new GameUpdater(client, renderer);
+		updater = new GameUpdater(client);
 		
 		// Country selector
 		selector = new CountrySelector(client.getInstance().getMap().getCountries());

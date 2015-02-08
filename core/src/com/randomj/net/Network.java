@@ -4,18 +4,9 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Color;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
-import com.randomj.gameobjects.Card;
-import com.randomj.gameobjects.Continent;
-import com.randomj.gameobjects.Country;
-import com.randomj.gameobjects.Deck;
-import com.randomj.gameobjects.Dice;
-import com.randomj.gameobjects.Enums;
-import com.randomj.gameobjects.GameInstance;
-import com.randomj.gameobjects.Map;
-import com.randomj.gameobjects.Enums.TurnPhase;
-import com.randomj.players.AI;
-import com.randomj.players.Human;
-import com.randomj.players.Player;
+import com.randomj.gameobjects.*;
+import com.randomj.gameobjects.Enums.*;
+import com.randomj.players.*;
 
 public class Network {
 
@@ -37,6 +28,10 @@ public class Network {
 	    kryo.register(Map.class);
 	    kryo.register(Color.class);
 	    kryo.register(TurnPhase.class);
+	    kryo.register(SubPhase.class);
+	    kryo.register(CardType.class);
 	    kryo.register(ArrayList.class);
+	    kryo.register(Mission.class);
+	    kryo.register(MissionType.class);
 	}
 }

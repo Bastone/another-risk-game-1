@@ -5,7 +5,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.randomj.gameobjects.Country;
-import com.randomj.net.PlayerClient;
 
 public class MapInputHandler implements InputProcessor, GestureListener { 
 
@@ -54,10 +53,10 @@ public class MapInputHandler implements InputProcessor, GestureListener {
 		if (!holdMouse) {
 			holdMouse = true;
 			Country country = selector.pickCountry(camHandler.pick(screenX, screenY));
-			if (country == null)
-				updater.voidPick();
-			else
+			if (country != null)
 				updater.picked(country);
+			else
+				updater.voidPick();
 			startX = screenX;
 			startY = screenY;
 			return true;
