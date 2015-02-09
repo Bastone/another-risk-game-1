@@ -2,7 +2,10 @@ package com.randomj.helpers;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.randomj.gameobjects.Card;
 import com.randomj.gameobjects.Country;
 import com.randomj.gameobjects.Dice;
@@ -18,10 +21,11 @@ public class GameUpdater {
 	private Country origin, target;
 	private GameInstance game;
 	private int min;
+	private Pixmap mapColors;
 	
 	public GameUpdater(PlayerClient client) {
 		this.client = client;
-		game =  client.getInstance();
+		mapColors = AssetLoader.mapColors;
 		origin = null;
 		target = null;
 		min = 0;
@@ -96,6 +100,7 @@ public class GameUpdater {
 					break;
 					
 				case MOVING_UNITS:
+					
 					if (country == target && origin.getUnits() > 1) {
 						moveUnits(origin, target, 1);
 						client.send(game);
@@ -172,6 +177,7 @@ public class GameUpdater {
 				
 				case ATTACKING: // Attacks
 					attack(origin, target, game.getDice());
+					game.startRolling();
 					if (target.getUnits() <= 0) {
 						capture(origin, target, game.getDice());
 						game.setSubPhase(SubPhase.MOVING_UNITS);
@@ -182,6 +188,7 @@ public class GameUpdater {
 						game.log(game.getCurrentPlayer().getName() + " attack another country or go to");
 					}				
 					client.send(game);
+					game.stopRolling();
 					break;
 					
 				case MOVING_UNITS: // Goes back to selection
@@ -247,7 +254,6 @@ public class GameUpdater {
 
 		origin.loseUnits(dice.getAttackerLoss());
 		target.loseUnits(dice.getDefenderLoss());
-
 	}
 	
 	public boolean areTradable(Player player, ArrayList<Card> traded) {
@@ -284,7 +290,6 @@ public class GameUpdater {
 	}
 	
 	public void nextPhase() {
-		GameInstance game = client.getInstance();
 		
 		switch (game.getPhase()) {
 		case REINFORCEMENT:
@@ -301,5 +306,18 @@ public class GameUpdater {
 		default:
 			break;
 		}
+	}
+
+	public Country pickCountry(Vector3 pick) {
+		int color = mapColors.getPixel((int) pick.x, (int) pick.y);		
+		if (color != 0xffffffff)
+			for (Country country: game.getMap().getCountries())
+				if (country.getColor() == color)
+					return country;	
+		return null;
+	}
+	
+	public void setGameInstance(GameInstance game) {
+		this.game = game;
 	}
 }

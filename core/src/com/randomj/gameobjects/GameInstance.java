@@ -24,7 +24,7 @@ public class GameInstance {
 	private SubPhase subPhase;
 	private Player currentPlayer;
 	private int id, nextPlayerIndex;
-	private boolean conquered, fortified;
+	private boolean conquered, fortified, rolling;
 	
 	public GameInstance() {}
 	
@@ -200,4 +200,15 @@ public class GameInstance {
 		conquered = true;
 	}
 
+	public void startRolling() {
+		rolling = true;
+	}
+	
+	public void stopRolling() {
+		rolling = false;
+	}
+
+	public boolean isRolling() {
+		return rolling;
+	}
 }

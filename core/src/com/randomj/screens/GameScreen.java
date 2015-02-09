@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.randomj.helpers.AssetLoader;
 import com.randomj.helpers.CameraHandler;
-import com.randomj.helpers.CountrySelector;
 import com.randomj.helpers.GameRenderer;
 import com.randomj.helpers.GameUpdater;
 import com.randomj.helpers.MapInputHandler;
@@ -27,7 +26,6 @@ public class GameScreen implements Screen {
 	private CameraHandler camHandler;
 	private SpriteBatch mapBatch, uiBatch;
 	private ShapeRenderer shape;
-	private CountrySelector selector;
 	private GameUpdater updater;
 	
 	public GameScreen(Risk risk, PlayerClient client) {		
@@ -57,19 +55,15 @@ public class GameScreen implements Screen {
 		uiBatch.setProjectionMatrix(uiCamera.combined);	
 		shape.setProjectionMatrix(mapCamera.combined);
 			
-		// Renderer
+		// Renderer & updater
 		renderer = new GameRenderer(gameWidth, gameHeight, screenWidth, screenHeight, client);
-			
-		// Updater
 		updater = new GameUpdater(client);
-		
-		// Country selector
-		selector = new CountrySelector(client.getInstance().getMap().getCountries());
+		client.set(renderer, updater);
 		
 		// Input handlers
 		InputMultiplexer multiplexer = new InputMultiplexer(); 
 		multiplexer.addProcessor(new UIInputHandler(uiCamera, renderer, updater)); 
-		multiplexer.addProcessor(new MapInputHandler(camHandler, selector, updater));
+		multiplexer.addProcessor(new MapInputHandler(camHandler, updater));
 		Gdx.input.setInputProcessor(multiplexer); 
 	}
 

@@ -23,8 +23,8 @@ public class Risk extends Game {
 		players.add(new Human("Eugeniugolo"));
 		players.add(new Human("Adolfride"));
 		
-		PlayerClient me = new PlayerClient(players.get(0), "127.0.0.1");
-//		PlayerClient me = new PlayerClient(players.get(1), "127.0.0.1");
+//		PlayerClient me = new PlayerClient(players.get(0), "127.0.0.1");
+		PlayerClient me = new PlayerClient(players.get(1), "127.0.0.1");
 //		PlayerClient me = new PlayerClient(players.get(2), "127.0.0.1");
 //		PlayerClient me = new PlayerClient(players.get(3), "127.0.0.1");
 		

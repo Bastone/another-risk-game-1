@@ -26,6 +26,7 @@ public class GameRenderer {
 	private CardsViewer cardsViewer;
 	private DiceViewer diceViewer;
 	private PlayerClient client;
+	private GameInstance game;
 	
 	public GameRenderer(int gameWidth, int gameHeight, int screenWidth, int screenHeight, PlayerClient client) {
 		
@@ -58,14 +59,16 @@ public class GameRenderer {
 		diceViewer = new DiceViewer(screenWidth, screenHeight);
 	}
 
-	public void renderMap(SpriteBatch batch, ShapeRenderer shape) {
-		Map map = client.getInstance().getMap();
+	public void renderMap(SpriteBatch batch, ShapeRenderer shape) {                                                                                    
+		
+		// Map
 		batch.begin(); 
 		mapSprite.draw(batch);	    
 		batch.end();
-
+		
+		// Circles
 		shape.begin(ShapeType.Filled);
-		for (Country country: map.getCountries()) {
+		for (Country country: game.getMap().getCountries()) {
 			if (country.isFree())
 				shape.setColor(Color.GRAY);
 			else
@@ -73,15 +76,16 @@ public class GameRenderer {
 			shape.circle(country.getX(), country.getY(), 15);
 		}
 		shape.end(); 
-
+		
+		// N. units
 		batch.begin();
-		for (Country country: map.getCountries())
+		for (Country country: game.getMap().getCountries())
 			font.draw(batch, country.getUnits() +  "", country.getX() - 2, country.getY() + 5);	
 		batch.end();
+		
 	}
 
 	public void renderUI(SpriteBatch batch, float delta) {
-		GameInstance game = client.getInstance();
 		ArrayList<String> log = game.getLastLogs();
 		
 	    batch.begin();
@@ -93,7 +97,6 @@ public class GameRenderer {
 	    
 		// Buttons	    
 	    cardsButton.draw(batch, font);
-	    setNextButton(game);
 	    nextButton.draw(batch, font);
 	    
 	    // Cards    
@@ -101,12 +104,38 @@ public class GameRenderer {
 	    
 	    // Dice
 	    diceViewer.draw(batch, delta);
-	    
+
 	    batch.end();
 		
 	}
+	    
+	public Button getCardsButton() {
+		return cardsButton;
+	}
 	
-	public void setNextButton(GameInstance game) {
+	public Button getNextButton() {
+		return nextButton;
+	}
+	
+	public CardsViewer getCardsViewer() {
+		return cardsViewer;
+	}
+
+	public DiceViewer getDiceViewer() {
+		return diceViewer;
+	}
+
+	public void setGameInstance(GameInstance game) {
+		this.game = game;
+		
+		if (game.isRolling()) {
+			diceViewer.setDice(game.getDice());
+			diceViewer.show();
+		}
+		else if (diceViewer.isVisible()) {
+			diceViewer.hide();
+		}
+		
 		if (client.itsYourTurn()) {
 			switch (game.getPhase()) {
 			
@@ -164,21 +193,5 @@ public class GameRenderer {
 			nextButton.setText("Waiting for opponent");
 			nextButton.disable();
 		}
-	}
-	    
-	public Button getCardsButton() {
-		return cardsButton;
-	}
-	
-	public Button getNextButton() {
-		return nextButton;
-	}
-	
-	public CardsViewer getCardsViewer() {
-		return cardsViewer;
-	}
-
-	public DiceViewer getDiceViewer() {
-		return diceViewer;
 	}
 }

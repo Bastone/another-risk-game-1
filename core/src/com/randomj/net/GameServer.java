@@ -48,6 +48,7 @@ public class GameServer {
 	    		}
 	    		
 	    		if (object instanceof GameInstance) {
+	    			System.out.println("E' arrivata un istanza");
 	    			GameInstance game = (GameInstance) object;
 	    			for (GameLobby lobby: lobbies)
 	    				if (lobby.getId() == game.getID()) {

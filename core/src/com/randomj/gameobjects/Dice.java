@@ -62,5 +62,4 @@ public class Dice {
 			string += die + " ";
 		return string;
 	}
-
 }

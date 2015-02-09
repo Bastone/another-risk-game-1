@@ -7,11 +7,15 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.randomj.gameobjects.GameInstance;
+import com.randomj.helpers.GameRenderer;
+import com.randomj.helpers.GameUpdater;
 import com.randomj.players.Player;
 
 public class PlayerClient {
 
 	private Player player;
+	private GameRenderer renderer;
+	private GameUpdater updater;
 	private GameInstance activeGame;
 	private Client client;
 	private boolean ready;
@@ -33,6 +37,7 @@ public class PlayerClient {
 	    		if (object instanceof GameInstance) {
 	    			activeGame = (GameInstance) object;
 	    			player = activeGame.getPlayer(player.getID());
+	    			update();
 	    			ready = true;
 	    			return;
 	    		}
@@ -52,9 +57,22 @@ public class PlayerClient {
 		}
 	}
 	
+	public void set(GameRenderer renderer, GameUpdater updater) {
+		this.renderer = renderer;
+		this.updater = updater;
+		update();
+	}
+
+	public void update() {
+		if (renderer != null && updater != null) {
+			renderer.setGameInstance(activeGame);
+			updater.setGameInstance(activeGame);
+		}
+	}
 
 	public void send(GameInstance game) {
 		client.sendTCP(game);
+		update();
 	}
 	
 	public void setPlayer(Player player) {
@@ -71,10 +89,6 @@ public class PlayerClient {
 	
 	public boolean isConnected() {
 		return client.isConnected();
-	}
-
-	public void setInstance(GameInstance game) {
-		this.activeGame = game;
 	}
 	
 	public boolean isReady() {

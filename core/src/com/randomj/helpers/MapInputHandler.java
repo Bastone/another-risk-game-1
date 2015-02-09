@@ -11,12 +11,10 @@ public class MapInputHandler implements InputProcessor, GestureListener {
 	private boolean holdMouse;
 	private int startX, startY;
 	private CameraHandler camHandler;
-	private CountrySelector selector;
 	private GameUpdater updater;
 	
-	public MapInputHandler(CameraHandler camHandler, CountrySelector selector, GameUpdater updater) {
+	public MapInputHandler(CameraHandler camHandler, GameUpdater updater) {
 		this.camHandler = camHandler;
-		this.selector = selector;
 		this.updater = updater;
 		holdMouse = false;
 	}
@@ -52,7 +50,7 @@ public class MapInputHandler implements InputProcessor, GestureListener {
 		
 		if (!holdMouse) {
 			holdMouse = true;
-			Country country = selector.pickCountry(camHandler.pick(screenX, screenY));
+			Country country = updater.pickCountry(camHandler.pick(screenX, screenY));
 			if (country != null)
 				updater.picked(country);
 			else

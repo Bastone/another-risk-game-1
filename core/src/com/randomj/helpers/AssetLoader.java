@@ -34,9 +34,6 @@ public class AssetLoader {
 		cavalry = new Texture(Gdx.files.internal("cavalry.png"));
 		artillery = new Texture(Gdx.files.internal("artillery.png"));
 		wild_card = new Texture(Gdx.files.internal("wild_card.png"));
-		
-		slot = new Texture(Gdx.files.internal("slot.png"));
-		slot_value = new Texture(Gdx.files.internal("slot_value.png"));
 	}
 	
 	public static void dispose() { 
@@ -48,9 +45,6 @@ public class AssetLoader {
 		cavalry.dispose();
 		artillery.dispose();
 		wild_card.dispose();
-		
-		slot.dispose();
-		slot_value.dispose();
 	}
 
 }
