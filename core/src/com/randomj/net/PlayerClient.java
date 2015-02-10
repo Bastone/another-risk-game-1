@@ -18,43 +18,53 @@ public class PlayerClient {
 	private GameUpdater updater;
 	private GameInstance activeGame;
 	private Client client;
-	private boolean ready;
+	private boolean ready, multiplayer;
 	
-	public PlayerClient(Player p, String host) {
+	public PlayerClient(Player p, GameInstance game) { // Called if offline
 		this.player = p;
+		multiplayer = false;
+		activeGame = game;
+	}
+
+	public PlayerClient(Player p, String host) { // Called if online
+		this.player = p;
+
+		multiplayer = true;
 		activeGame = null;
 		ready = false;
 		
 		client = new Client(8192, 2048*2);	
 		Network.register(client);
 
-	    client.addListener(new Listener() {
+		client.addListener(new Listener() {
+
 			public void connected (Connection connection) {
 				client.sendTCP(player);
 			}
-			
-	    	public void received(Connection connection, Object object) {
-	    		if (object instanceof GameInstance) {
-	    			activeGame = (GameInstance) object;
-	    			player = activeGame.getPlayer(player.getID());
-	    			update();
-	    			ready = true;
-	    			return;
-	    		}
-	    		if (object instanceof Player) {
-	    			player = (Player) object;
-	    		}
-	    		
-	    	}
-	    });
-		
+
+			public void received(Connection connection, Object object) {
+				if (object instanceof GameInstance) {
+					activeGame = (GameInstance) object;
+					player = activeGame.getPlayer(player.getID());
+					update();
+					ready = true;
+					return;
+				}
+				if (object instanceof Player) {
+					player = (Player) object;
+					return;
+				}
+			}
+		});
+
 		client.start();
-		
+
 		try {
 			client.connect(Network.timeout, host, Network.port);
 		} catch (IOException e) {
 			Gdx.app.log("Client", "Server non connesso");
 		}
+
 	}
 	
 	public void set(GameRenderer renderer, GameUpdater updater) {
@@ -71,7 +81,9 @@ public class PlayerClient {
 	}
 
 	public void send(GameInstance game) {
-		client.sendTCP(game);
+		if (multiplayer) {
+			client.sendTCP(game);
+		}
 		update();
 	}
 	
@@ -97,5 +109,9 @@ public class PlayerClient {
 
 	public boolean itsYourTurn() {
 		return (player.getID() == activeGame.getCurrentPlayer().getID());
+	}
+
+	public boolean isMultiplayer() {
+		return multiplayer;
 	}
 }

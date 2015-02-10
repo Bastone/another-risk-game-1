@@ -13,6 +13,7 @@ public class Country {
 	private String name;
 	private Player owner;
 	private ArrayList<Country> borders;
+	private Continent continent;
 	private int units;
 	private long pattern;
 	private int color;
@@ -97,6 +98,14 @@ public class Country {
 
 	public float getY() {
 		return y;
+	}
+
+	public void setContinent(Continent continent) {
+		this.continent = continent;
+	}
+	
+	public Continent getContinent() {
+		return continent;
 	}
 	
 	public void setBorders(ArrayList<Country> borders) {

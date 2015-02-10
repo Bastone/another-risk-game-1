@@ -16,7 +16,7 @@ public class Deck {
 	public Deck() {}
 	
 	public Deck(ArrayList<Country> countries) {
-		cards = new ArrayList<Card>();
+		cards = new ArrayList<Card>(44);
 		init(countries);		
 	}
 	

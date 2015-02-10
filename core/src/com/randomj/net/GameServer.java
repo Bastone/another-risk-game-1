@@ -42,8 +42,10 @@ public class GameServer {
 					player.setID();
 					lobby.addClient(connection.getID(), player);
 					connection.sendTCP(player);
-					if (lobby.isFull())
+					if (lobby.isFull()) {
 						sendToLobby(lobby, lobby.getInstance());
+						System.out.println("Istanza inviata");
+					}
 					return;
 	    		}
 	    		

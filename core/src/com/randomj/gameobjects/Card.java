@@ -6,6 +6,7 @@ public class Card {
 	private Country country;
 	private CardType type;
 	private int pattern;
+	private String text;
 	
 	public Card() {}
 	
@@ -13,6 +14,10 @@ public class Card {
 		this.country = country;
 		this.type = type;
 		this.pattern = pattern;
+		if (country == null)
+			text = "Wild card";
+		else
+			text = country.getName();
 	}
 	
 	public boolean isWildCard() {
@@ -30,11 +35,12 @@ public class Card {
 	public int getPattern() {
 		return pattern;
 	}
+	
+	public String getText() {
+		return text;
+	}
 
 	public String toString() {
-		if (type == CardType.WILD_CARD)
-			return type.toString() + " " + Integer.toBinaryString(pattern);
-		else
-			return type.toString() + " " + country.getName() + " " + Integer.toBinaryString(pattern);
+		return type.toString() + " " + text + " " + Integer.toBinaryString(pattern);
 	}
 }

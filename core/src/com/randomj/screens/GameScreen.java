@@ -21,7 +21,6 @@ public class GameScreen implements Screen {
 	private int gameWidth, gameHeight, screenWidth, screenHeight;
 	private Risk risk;
 	private OrthographicCamera mapCamera, uiCamera;
-	private PlayerClient client;
 	private GameRenderer renderer;
 	private CameraHandler camHandler;
 	private SpriteBatch mapBatch, uiBatch;
@@ -30,7 +29,6 @@ public class GameScreen implements Screen {
 	
 	public GameScreen(Risk risk, PlayerClient client) {		
 		this.risk = risk;
-		this.client = client;
 		
 		// Dimensions
 		gameWidth = AssetLoader.map.getWidth();

@@ -16,7 +16,7 @@ public class GameInstance {
 	private Map map;
 	private Deck deck;
 	private ArrayList<Player> players;
-	private ArrayList<String> log;
+	private String log;
 	private ArrayList<Color> colors;
 	private ArrayList<Mission> missions;
 	private Dice dice;
@@ -26,13 +26,25 @@ public class GameInstance {
 	private int id, nextPlayerIndex;
 	private boolean conquered, fortified, rolling;
 	
-	public GameInstance() {}
+	public GameInstance(ArrayList<Player> players) { // Called if offline
+		id = 0;
+		init();
+		for (Player player: players) {
+			player.setID();
+			addPlayer(player);
+		}
+		begin();
+	}
 	
-	public GameInstance(int id) {
+	public GameInstance(int id) { // Called if online
 		this.id = id;
-		players = new ArrayList<Player>();
+		init();
+	}
+	
+	public void init() {
+		players = new ArrayList<Player>(6);
 		map = new Map();
-		log = new ArrayList<String>();
+		log = null;
 		dice = new Dice();
 		
 		colors = new ArrayList<Color>(6);	
@@ -44,7 +56,7 @@ public class GameInstance {
 		colors.add(Color.BLACK);
 		Collections.shuffle(colors);
 		
-		missions = new ArrayList<Mission>();
+		missions = new ArrayList<Mission>(14);
 		long pattern;
 		pattern = map.getContinents().get(2).getPattern() + map.getContinents().get(5).getPattern();
 		missions.add(new Mission(MissionType.CAPTURE_CONTINENTS_PLUS_ONE, "Capture Europe, Australia and one other continent", pattern));
@@ -63,7 +75,7 @@ public class GameInstance {
 	
 	public void addPlayer(Player player) {
 		player.setColor(colors.remove(colors.size() - 1));
-		missions.add(new Mission(MissionType.DEFEAT_PLAYER, "Destroy all  " + player.getColor() + " armies", player));
+		missions.add(new Mission(MissionType.DEFEAT_PLAYER, "Destroy all  " + player.getName() + " armies", player));
 		players.add(player);
 	}
 
@@ -99,16 +111,10 @@ public class GameInstance {
 		for (Player player: players) {
 			while (player.getUnits() > 0)
 				player.setRandomUnit();
-			for (Continent continent: map.getContinents()) {
-				if (player.checkContinent(continent)) {
-					player.conquerContinent(continent);
-				}
-			}
 		}
 		
-		log("Game started");	
-		
 		phase = TurnPhase.REINFORCEMENT;
+		subPhase = SubPhase.SELECTION;
 		
 		nextPlayer();
 		
@@ -121,7 +127,7 @@ public class GameInstance {
 		currentPlayer = players.get(nextPlayerIndex);		
 		if (phase != null) {
 			currentPlayer.beginTurn();
-			log("It's " + currentPlayer.getName() + " turn");
+			log("It's " + currentPlayer.getName() + "'s turn");
 		}
 		
 		nextPlayerIndex++;
@@ -141,16 +147,12 @@ public class GameInstance {
 		this.subPhase = subPhase;
 	}
 
-	public ArrayList<String> getLastLogs() {
-		ArrayList<String> lastLogs = new ArrayList<String>(3);
-		int limit = Math.max(0, log.size() - 3);
-		for (int i = log.size() - 1; i >= limit; i--)
-			lastLogs.add(log.get(i));
-		return lastLogs;
+	public String getLog() {
+		return log;
 	}
 	
 	public void log(String string) {
-		log.add(string);
+		log = string;
 	}
 
 	public Player getCurrentPlayer() {
@@ -175,13 +177,6 @@ public class GameInstance {
 
 	public int getID() {
 		return id;
-	}
-	
-	public Player getPlayer(int id) {
-		for (Player player: players)
-			if (player.getID() == id)
-				return player;
-		return null;
 	}
 
 	public boolean hasFortified() {
@@ -210,5 +205,16 @@ public class GameInstance {
 
 	public boolean isRolling() {
 		return rolling;
+	}
+	
+	public Player getPlayer(int id) {
+		for (Player player: players)
+			if (player.getID() == id)
+				return player;
+		return null;
+	}
+
+	public ArrayList<Player> getPlayers() {
+		return players;
 	}
 }

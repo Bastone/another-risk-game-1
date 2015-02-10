@@ -15,6 +15,7 @@ public class Network {
 	static public void register (EndPoint endPoint) {
 		Kryo kryo = endPoint.getKryo();
 		kryo.setReferences(true);
+		kryo.register(String.class);
 	    kryo.register(Player.class);
 	    kryo.register(Human.class);
 	    kryo.register(AI.class);

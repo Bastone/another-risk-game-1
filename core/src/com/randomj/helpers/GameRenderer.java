@@ -1,7 +1,5 @@
 package com.randomj.helpers;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -10,23 +8,25 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.randomj.gameobjects.Country;
 import com.randomj.gameobjects.GameInstance;
-import com.randomj.gameobjects.Map;
 import com.randomj.net.PlayerClient;
 import com.randomj.ui.Button;
 import com.randomj.ui.CardsViewer;
 import com.randomj.ui.DiceViewer;
+import com.randomj.ui.Window;
 
 
 public class GameRenderer {
 	
-	private static final int BUTTON_MARGIN = 20, CARDS_MARGIN = 10, TEXT_PADDING = 35, TEXT_GAP = 20;
+	private static final int BUTTON_MARGIN = 20, CARDS_MARGIN = 10, BUTTON_TEXT_PADDING = 37,
+			WINDOW_TEXT_PADDING = 20, CONSOLE_TEXT_PADDING = 35, CARDS_TEXT_PADDING = 40;
 	private Sprite mapSprite, consoleSprite;
-	private Button nextButton, cardsButton;
+	private Button nextButton, cardsButton, missionButton;
 	private BitmapFont font;
 	private CardsViewer cardsViewer;
 	private DiceViewer diceViewer;
 	private PlayerClient client;
 	private GameInstance game;
+	private Window missionWindow;
 	
 	public GameRenderer(int gameWidth, int gameHeight, int screenWidth, int screenHeight, PlayerClient client) {
 		
@@ -46,14 +46,19 @@ public class GameRenderer {
 		consoleSprite.setBounds(xDiv, 0, xDiv * 5, yDiv);
 			
 		// Buttons
-		cardsButton = new Button(BUTTON_MARGIN, BUTTON_MARGIN, xDiv - BUTTON_MARGIN * 2, yDiv - BUTTON_MARGIN * 2, TEXT_PADDING);
+		cardsButton = new Button(BUTTON_MARGIN, BUTTON_MARGIN, xDiv - BUTTON_MARGIN * 2, yDiv - BUTTON_MARGIN * 2, BUTTON_TEXT_PADDING);
 		cardsButton.setText("Cards");
-		nextButton = new Button(xDiv * 6 + BUTTON_MARGIN, BUTTON_MARGIN, xDiv - BUTTON_MARGIN * 2, yDiv - BUTTON_MARGIN * 2, TEXT_PADDING);
+		nextButton = new Button(xDiv * 6 + BUTTON_MARGIN, BUTTON_MARGIN, xDiv - BUTTON_MARGIN * 2, yDiv - BUTTON_MARGIN * 2, BUTTON_TEXT_PADDING);
 		nextButton.setText("Waiting");
 		nextButton.disable();
+		missionButton = new Button(BUTTON_MARGIN, yDiv * 4 + BUTTON_MARGIN,  xDiv - BUTTON_MARGIN * 2, yDiv - BUTTON_MARGIN * 2, BUTTON_TEXT_PADDING);
+		missionButton.setText("Mission");
+		
+		//Windows
+		missionWindow = new Window(xDiv * 2, yDiv * 2 + yDiv / 3, xDiv * 3, yDiv / 3, WINDOW_TEXT_PADDING);
 		
 		// Cards
-		cardsViewer = new CardsViewer(xDiv, yDiv, CARDS_MARGIN);
+		cardsViewer = new CardsViewer(xDiv, yDiv, CARDS_MARGIN, CARDS_TEXT_PADDING);
 
 		// Dice
 		diceViewer = new DiceViewer(screenWidth, screenHeight);
@@ -86,21 +91,24 @@ public class GameRenderer {
 	}
 
 	public void renderUI(SpriteBatch batch, float delta) {
-		ArrayList<String> log = game.getLastLogs();
 		
 	    batch.begin();
 	    
 	    // Console
 	    consoleSprite.draw(batch);
-	    for (int i = 0; i < log.size(); i++)
-	    	font.draw(batch, log.get(i), consoleSprite.getX() + TEXT_PADDING, consoleSprite.getY() + TEXT_PADDING + TEXT_GAP * i);
+	    if (game.getLog() != null)
+	    	font.draw(batch, game.getLog(), consoleSprite.getX() + CONSOLE_TEXT_PADDING, consoleSprite.getY() + CONSOLE_TEXT_PADDING);
 	    
 		// Buttons	    
 	    cardsButton.draw(batch, font);
 	    nextButton.draw(batch, font);
+	    missionButton.draw(batch, font);
+	    
+	    // Windows
+	    missionWindow.draw(batch, font);
 	    
 	    // Cards    
-	    cardsViewer.draw(batch);
+	    cardsViewer.draw(batch, font);
 	    
 	    // Dice
 	    diceViewer.draw(batch, delta);
@@ -128,11 +136,19 @@ public class GameRenderer {
 	public void setGameInstance(GameInstance game) {
 		this.game = game;
 		
+		missionWindow.setText(client.getPlayer().getMission().getDescription());
+		
+		if (client.getPlayer().getCards().isEmpty())
+			cardsButton.disable();
+		else {
+			cardsButton.enable();
+			cardsViewer.setCards(client.getPlayer().getCards());
+		}
+		
 		if (game.isRolling()) {
 			diceViewer.setDice(game.getDice());
 			diceViewer.show();
-		}
-		else if (diceViewer.isVisible()) {
+		} else if (diceViewer.isVisible()) {
 			diceViewer.hide();
 		}
 		
@@ -170,6 +186,9 @@ public class GameRenderer {
 					nextButton.setText("Ok");
 					nextButton.enable();
 					break;
+					
+				default:
+					break;
 				}
 				break;
 				
@@ -193,5 +212,13 @@ public class GameRenderer {
 			nextButton.setText("Waiting for opponent");
 			nextButton.disable();
 		}
+	}
+
+	public Button getMissionButton() {
+		return missionButton;
+	}
+
+	public Window getMissionWindow() {
+		return missionWindow;
 	}
 }

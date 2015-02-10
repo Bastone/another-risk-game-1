@@ -76,35 +76,58 @@ public class Map {
 		//CONTINENTS
 		long pattern = 0;
 		int i = 0;
+		Continent continent = new Continent("North America", 5);
 		for (;i < 9; i++) {
+			countries.get(i).setContinent(continent);
 			pattern = pattern | countries.get(i).getPattern();
 		}
-		continents.add(new Continent("North America", 5, pattern));
+		continent.setPattern(pattern);
+		continents.add(continent);
 
 		pattern = 0;
-		for (;i < 13; i++)
+		continent = new Continent("South America", 2);
+		for (;i < 13; i++) {
+			countries.get(i).setContinent(continent);
 			pattern = pattern | countries.get(i).getPattern();
-		continents.add(new Continent("South America", 2, pattern));
+		}
+		continent.setPattern(pattern);
+		continents.add(continent);
 
 		pattern = 0;
-		for (; i < 20; i++)
+		continent = new Continent("Africa", 3);
+		for (; i < 20; i++) {
+			countries.get(i).setContinent(continent);
 			pattern = pattern | countries.get(i).getPattern();
-		continents.add(new Continent("Africa", 3, pattern));
+		}
+		continent.setPattern(pattern);
+		continents.add(continent);
 
 		pattern = 0;
-		for (; i < 26; i++)
+		continent = new Continent("Europe", 5);
+		for (; i < 26; i++) {
+			countries.get(i).setContinent(continent);
 			pattern = pattern | countries.get(i).getPattern();
-		continents.add(new Continent("Europe", 5, pattern));
+		}
+		continent.setPattern(pattern);
+		continents.add(continent);
 
 		pattern = 0;
-		for (; i < 38; i++)
+		continent = new Continent("Asia", 7);
+		for (; i < 38; i++) {
+			countries.get(i).setContinent(continent);
 			pattern = pattern | countries.get(i).getPattern();
-		continents.add(new Continent("Asia", 7, pattern));
+		}
+		continent.setPattern(pattern);
+		continents.add(continent);
 		
 		pattern = 0;
-		for (; i < 42; i++)
+		continent = new Continent("Australia", 2);
+		for (; i < 42; i++) {
+			countries.get(i).setContinent(continent);
 			pattern = pattern | countries.get(i).getPattern();
-		continents.add(new Continent("Australia", 2, pattern));
+		}
+		continent.setPattern(pattern);
+		continents.add(continent);
 		
 		//BORDERS	
 		ArrayList<Country> borders = new ArrayList<Country>(); 

@@ -24,7 +24,6 @@ public class Dice {
 		for (int i = 0; i < nDiceDefender; i++) 
 			defender.add(MathUtils.random(1,6));
 	
-		
 		attacker.sort(Collections.reverseOrder());
 		defender.sort(Collections.reverseOrder());
 		Gdx.app.log("Sorted dice", toString());

@@ -2,7 +2,6 @@ package com.randomj.helpers;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -20,24 +19,42 @@ public class GameUpdater {
 	private PlayerClient client;
 	private Country origin, target;
 	private GameInstance game;
+	private ArrayList<Card> picked;
 	private int min;
 	private Pixmap mapColors;
 	
 	public GameUpdater(PlayerClient client) {
 		this.client = client;
 		mapColors = AssetLoader.mapColors;
+		picked = new ArrayList<Card>();
 		origin = null;
 		target = null;
 		min = 0;
 	}
 	
 	public void cardPicked(Card card) {
-		
+		if (client.itsYourTurn()) {
+			if (game.getPhase() == TurnPhase.REINFORCEMENT)
+				if (picked.contains(card)) {
+					picked.remove(card);
+					game.setSubPhase(SubPhase.SELECTION);
+				} else if (game.getSubPhase() == SubPhase.SELECTION && picked.size() < 3) {
+					picked.add(card);
+					if (picked.size() == 3)
+						if (areTradable(picked))
+							game.setSubPhase(SubPhase.CARDS_TRADING);					
+				}
+		}
 	}
 
 	public void voidPick() {
 		if (client.itsYourTurn()) {
 			switch (game.getPhase()) {
+			
+			case REINFORCEMENT:
+				picked.clear();
+				game.setSubPhase(SubPhase.SELECTION);
+				break;
 			
 			case ATTACK_PHASE:
 				game.log(game.getCurrentPlayer().getName() + ", attack a country or go to the fortify phase");
@@ -68,11 +85,12 @@ public class GameUpdater {
 			switch (game.getPhase()) {
 			
 			case REINFORCEMENT:
-				// Player owns that country and has some units to set
-				if (game.getCurrentPlayer().owns(country) && game.getCurrentPlayer().getUnits() != 0) {
-					setUnits(country, 1);
-					game.log(client.getPlayer().getName() + " places 1 unit in " + country.getName());
-					client.send(game);
+				if (game.getSubPhase() == SubPhase.SELECTION) {
+					// Player owns that country and has some units to set
+					if (game.getCurrentPlayer().owns(country) && game.getCurrentPlayer().getUnits() != 0) {
+						setUnits(country, 1);
+						client.send(game);
+					}
 				}
 				break;
 				
@@ -154,9 +172,8 @@ public class GameUpdater {
 					break;
 				}
 				break;
-				
 			default:
-				break;			
+				break;		
 			}
 		}
 	}
@@ -166,9 +183,14 @@ public class GameUpdater {
 			switch (game.getPhase()) {
 			
 			case REINFORCEMENT:
-				// Goes to attack phase
-				nextPhase();
-				game.log(game.getCurrentPlayer().getName() + ", attack a country or go to the fortify phase");	
+				if (game.getSubPhase() == SubPhase.SELECTION) {
+					// Goes to attack phase
+					nextPhase();
+					game.log(game.getCurrentPlayer().getName() + ", attack a country or go to the fortify phase");	
+				} else {
+					trade(game.getCurrentPlayer(), picked);
+					game.log(game.getCurrentPlayer().getName() + " traded a set of cards!");			
+				}
 				client.send(game);
 				break;
 				
@@ -179,13 +201,21 @@ public class GameUpdater {
 					attack(origin, target, game.getDice());
 					game.startRolling();
 					if (target.getUnits() <= 0) {
+						Player previousOwner = target.getOwner();
 						capture(origin, target, game.getDice());
-						game.setSubPhase(SubPhase.MOVING_UNITS);
-						game.log(game.getCurrentPlayer().getName() + " conquers " + target.getName() + "! Now move your units");
-						game.conquered();
+						if (previousOwner.defeated())
+							game.getPlayers().remove(previousOwner);
+						if (game.getCurrentPlayer().wins()) {
+							game.setPhase(TurnPhase.END);
+							game.log(game.getCurrentPlayer().getName() + " won!");
+						} else {
+							game.setSubPhase(SubPhase.MOVING_UNITS);
+							game.log(game.getCurrentPlayer().getName() + " conquers " + target.getName() + "! Now move your units");
+							game.conquered();
+						}
 					} else if (origin.getUnits() <= 1) {
 						game.setSubPhase(SubPhase.SELECTION);
-						game.log(game.getCurrentPlayer().getName() + " attack another country or go to");
+						game.log(game.getCurrentPlayer().getName() + " attack another country or go to fortufy phase");
 					}				
 					client.send(game);
 					game.stopRolling();
@@ -202,6 +232,7 @@ public class GameUpdater {
 					
 				default: // Goes to fortify phase
 					nextPhase();
+					game.getCurrentPlayer().addCard(game.getDeck().draw());
 					game.log(game.getCurrentPlayer().getName() + ", fortify a country or end turn");
 					client.send(game);
 					break;
@@ -216,11 +247,12 @@ public class GameUpdater {
 					game.log(game.getCurrentPlayer().getName() + ", trade your cards or reinforce your territories");
 				else
 					game.log(game.getCurrentPlayer().getName() + ", tap on a territory to reinforce it");
+				if (client.isMultiplayer())
+					client.setPlayer(game.getCurrentPlayer());
 				client.send(game);
 				break;
-
 			default:
-				break;		
+				break;	
 			}
 		}
 	}
@@ -229,6 +261,7 @@ public class GameUpdater {
 		Player previousOwner = target.getOwner();
 		previousOwner.loseCountry(target);
 		origin.getOwner().conquerCountry(target);
+
 		min = dice.getAttackerDice().size() - dice.getAttackerLoss();
 		origin.loseUnits(min);
 		target.addUnits(min);
@@ -256,7 +289,7 @@ public class GameUpdater {
 		target.loseUnits(dice.getDefenderLoss());
 	}
 	
-	public boolean areTradable(Player player, ArrayList<Card> traded) {
+	public boolean areTradable(ArrayList<Card> traded) {
 		int nWildCards = 0;
 		for (Card card: traded)
 			if (card.isWildCard())
@@ -287,18 +320,18 @@ public class GameUpdater {
 			player.addUnits(6);
 		else if (and == 4)
 			player.addUnits(8);
+		
+		for (Card card: traded)
+			player.getCards().remove(card);
 	}
 	
-	public void nextPhase() {
-		
+	public void nextPhase() {	
 		switch (game.getPhase()) {
 		case REINFORCEMENT:
-			game.setPhase(TurnPhase.ATTACK_PHASE);
-			game.setSubPhase(SubPhase.SELECTION);
+			game.setPhase(TurnPhase.ATTACK_PHASE);		
 			break;
 		case ATTACK_PHASE:
 			game.setPhase(TurnPhase.FORTIFYING);
-			game.setSubPhase(SubPhase.SELECTION);
 			break;
 		case FORTIFYING:
 			game.setPhase(TurnPhase.REINFORCEMENT);
@@ -306,6 +339,7 @@ public class GameUpdater {
 		default:
 			break;
 		}
+		game.setSubPhase(SubPhase.SELECTION);
 	}
 
 	public Country pickCountry(Vector3 pick) {

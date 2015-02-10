@@ -8,6 +8,7 @@ import com.randomj.gameobjects.Card;
 import com.randomj.gameobjects.Continent;
 import com.randomj.gameobjects.Country;
 import com.randomj.gameobjects.Mission;
+import com.randomj.ui.Button;
 
 public abstract class Player {
 	
@@ -17,9 +18,8 @@ public abstract class Player {
 	protected ArrayList<Continent> ownedContinents;
 	protected ArrayList<Card> cards;
 	protected long pattern;
-	protected int units, id, nOwnedContinents;
+	protected int units, id;
 	protected Mission mission;
-	
 	
 	public void Player() {}
 	
@@ -73,19 +73,17 @@ public abstract class Player {
 		pattern += country.getPattern();
 		ownedCountries.add(country);
 		country.setOwner(this);
-	}
-	
-	public void conquerContinent(Continent continent) {
-		ownedContinents.add(continent);
-	}
-	
-	public void loseContinent(Continent continent) {
-		ownedContinents.remove(continent);
+		Continent continent = country.getContinent();
+		if (!ownedContinents.contains(continent) && continent.check(pattern))
+			ownedContinents.add(continent);
 	}
 	
 	public void loseCountry(Country country) {
 		pattern -= country.getPattern();
 		ownedCountries.remove(country);
+		Continent continent = country.getContinent();
+		if (!ownedContinents.contains(continent))
+			ownedContinents.remove(continent);
 	}
 	
 	public void addCard(Card card) {
@@ -148,8 +146,7 @@ public abstract class Player {
 		return ownedContinents;
 	}
 
-	public boolean checkContinent(Continent continent) {
-		return (continent.getPattern() & pattern) == continent.getPattern();
+	public Mission getMission() {
+		return mission;
 	}
-
 }

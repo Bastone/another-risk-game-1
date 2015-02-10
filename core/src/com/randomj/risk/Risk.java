@@ -1,10 +1,13 @@
 package com.randomj.risk;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.randomj.gameobjects.GameInstance;
 import com.randomj.helpers.AssetLoader;
+import com.randomj.net.GameServer;
 import com.randomj.net.PlayerClient;
 import com.randomj.players.Human;
 import com.randomj.players.Player;
@@ -15,6 +18,10 @@ public class Risk extends Game {
 	@Override
 	public void create() {
 		AssetLoader.load(); 
+		
+		boolean online = false; // Se online, avviare server e i diversi client a parte
+		GameServer server;
+		PlayerClient me;
 
 		// Giocatori di prova
 		ArrayList<Player> players = new ArrayList<Player>(); 
@@ -22,20 +29,19 @@ public class Risk extends Game {
 		players.add(new Human("Gertrudelio"));
 		players.add(new Human("Eugeniugolo"));
 		players.add(new Human("Adolfride"));
-		
-//		PlayerClient me = new PlayerClient(players.get(0), "127.0.0.1");
-		PlayerClient me = new PlayerClient(players.get(1), "127.0.0.1");
-//		PlayerClient me = new PlayerClient(players.get(2), "127.0.0.1");
-//		PlayerClient me = new PlayerClient(players.get(3), "127.0.0.1");
-		
-		while (!me.isReady()) {
-			Gdx.app.log("Client","is waiting");
+
+		if (!online)
+			me = new PlayerClient(players.get(0), new GameInstance(players));
+		else {
+			me = new PlayerClient(players.get(0), "127.0.0.1");
+
+			while (!me.isReady()) {
+				Gdx.app.log("Client","is waiting");
+			}
+
+			Gdx.app.log("Istanza", me.getInstance().toString());
 		}
-		
-		Gdx.app.log("Istanza", me.getInstance().toString());
-	
 		setScreen(new GameScreen(this, me));
-//		setScreen(new SplashScreen());
 	}
 
 	@Override

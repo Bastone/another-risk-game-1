@@ -8,14 +8,17 @@ public class Continent {
 	
 	public Continent() {}
 	
-	public Continent(String name, int bonusUnits, long pattern) {
+	public Continent(String name, int bonusUnits) {
 		this.name = name;
 		this.bonusUnits = bonusUnits;
-		this.pattern = pattern;
 	}
 	
 	public long getPattern() {
 		return pattern;
+	}
+	
+	public void setPattern(long pattern) {
+		this.pattern = pattern;
 	}
 
 	public int getBonusUnits() {
@@ -32,6 +35,10 @@ public class Continent {
 
 	public boolean contains(Country target) {
 		return ((pattern & target.getPattern()) == target.getPattern());
+	}
+
+	public boolean check(long pattern) {
+		return ((this.pattern & pattern) == this.pattern);
 	}
 
 }
