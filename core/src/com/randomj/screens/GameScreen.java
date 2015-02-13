@@ -70,11 +70,13 @@ public class GameScreen implements Screen {
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		mapBatch.setProjectionMatrix(mapCamera.combined);
-		shape.setProjectionMatrix(mapCamera.combined);
 		uiBatch.setProjectionMatrix(uiCamera.combined);
 	    
+		shape.setProjectionMatrix(mapCamera.combined);
 		renderer.renderMap(mapBatch, shape);
-		renderer.renderUI(uiBatch, delta);
+		
+		shape.setProjectionMatrix(uiCamera.combined);
+		renderer.renderUI(uiBatch, shape, delta);
 	}
 
 	@Override

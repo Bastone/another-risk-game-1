@@ -1,12 +1,12 @@
 package com.randomj.helpers;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.randomj.gameobjects.Country;
+import com.randomj.gameobjects.Enums.SubPhase;
 import com.randomj.gameobjects.GameInstance;
 import com.randomj.net.PlayerClient;
 import com.randomj.ui.Button;
@@ -74,10 +74,7 @@ public class GameRenderer {
 		// Circles
 		shape.begin(ShapeType.Filled);
 		for (Country country: game.getMap().getCountries()) {
-			if (country.isFree())
-				shape.setColor(Color.GRAY);
-			else
-				shape.setColor(country.getOwner().getColor());
+			shape.setColor(country.getOwner().getColor());
 			shape.circle(country.getX(), country.getY(), 15);
 		}
 		shape.end(); 
@@ -90,15 +87,16 @@ public class GameRenderer {
 		
 	}
 
-	public void renderUI(SpriteBatch batch, float delta) {
+	public void renderUI(SpriteBatch batch, ShapeRenderer shape, float delta) {
 		
 	    batch.begin();
 	    
 	    // Console
 	    consoleSprite.draw(batch);
-	    if (game.getLog() != null)
+	    if (game.getLog() != null) {
+	    	font.setColor(game.getCurrentPlayer().getColor());
 	    	font.draw(batch, game.getLog(), consoleSprite.getX() + CONSOLE_TEXT_PADDING, consoleSprite.getY() + CONSOLE_TEXT_PADDING);
-	    
+	    }
 		// Buttons	    
 	    cardsButton.draw(batch, font);
 	    nextButton.draw(batch, font);
@@ -109,6 +107,7 @@ public class GameRenderer {
 	    
 	    // Cards    
 	    cardsViewer.draw(batch, font);
+	    cardsViewer.drawSelection(shape);
 	    
 	    // Dice
 	    diceViewer.draw(batch, delta);
@@ -156,12 +155,17 @@ public class GameRenderer {
 			switch (game.getPhase()) {
 			
 			case REINFORCEMENT:
-				// If player runs out of units
-				if (game.getCurrentPlayer().getUnits() == 0) {
+
+				if (game.getSubPhase() == SubPhase.CARDS_TRADING) {
+					nextButton.setText("Trade");
+					nextButton.enable();
+				} else if (game.getCurrentPlayer().getUnits() == 0) {
 					nextButton.setText("Go to attack phase");
 					nextButton.enable();
-				} else 
+				} else {
 					nextButton.setText("Placing " + game.getCurrentPlayer().getUnits() + " more units");
+					nextButton.disable();
+				}
 				break;
 				
 			case ATTACK_PHASE:

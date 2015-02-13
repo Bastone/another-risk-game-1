@@ -1,13 +1,11 @@
 package com.randomj.risk;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.randomj.gameobjects.GameInstance;
 import com.randomj.helpers.AssetLoader;
-import com.randomj.net.GameServer;
 import com.randomj.net.PlayerClient;
 import com.randomj.players.Human;
 import com.randomj.players.Player;
@@ -20,7 +18,6 @@ public class Risk extends Game {
 		AssetLoader.load(); 
 		
 		boolean online = false; // Se online, avviare server e i diversi client a parte
-		GameServer server;
 		PlayerClient me;
 
 		// Giocatori di prova
@@ -37,9 +34,12 @@ public class Risk extends Game {
 
 			while (!me.isReady()) {
 				Gdx.app.log("Client","is waiting");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-
-			Gdx.app.log("Istanza", me.getInstance().toString());
 		}
 		setScreen(new GameScreen(this, me));
 	}

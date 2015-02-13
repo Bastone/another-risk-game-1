@@ -22,7 +22,7 @@ public class GameLobby {
 	}
 
 	public boolean isFull() {
-		return clientsID.size() == 4;
+		return clientsID.size() == 2;
 	}
 
 	public void addClient(int id, Player player) {

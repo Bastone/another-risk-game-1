@@ -26,6 +26,13 @@ public class GameInstance {
 	private int id, nextPlayerIndex;
 	private boolean conquered, fortified, rolling;
 	
+	public GameInstance() {}
+	
+	public GameInstance(int id) { // Called if online
+		this.id = id;
+		init();
+	}
+	
 	public GameInstance(ArrayList<Player> players) { // Called if offline
 		id = 0;
 		init();
@@ -35,12 +42,7 @@ public class GameInstance {
 		}
 		begin();
 	}
-	
-	public GameInstance(int id) { // Called if online
-		this.id = id;
-		init();
-	}
-	
+
 	public void init() {
 		players = new ArrayList<Player>(6);
 		map = new Map();
@@ -134,6 +136,8 @@ public class GameInstance {
 		if (nextPlayerIndex == players.size())
 			nextPlayerIndex = 0;			
 	}
+	
+	
 	
 	public Map getMap() {
 		return map;

@@ -2,9 +2,12 @@ package com.randomj.ui;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.randomj.gameobjects.Card;
 import com.randomj.helpers.AssetLoader;
@@ -80,6 +83,19 @@ public class CardsViewer {
 						sprites.get(i).setX(xPos.get(i));
 				}
 			}	
+		}
+	}
+	
+	public void drawSelection(ShapeRenderer shape) {
+		if (isVisible) {
+			shape.begin(ShapeType.Line);
+			shape.setColor(Color.RED);
+			for (int i = 0; i < sprites.size(); i++) {
+				if (cards.get(i).isSelected())
+					shape.rect(sprites.get(i).getX(), sprites.get(i).getY(), sprites.get(i).getWidth(),
+							sprites.get(i).getHeight());
+			}
+			shape.end();
 		}
 	}
 

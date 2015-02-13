@@ -36,13 +36,17 @@ public class GameUpdater {
 		if (client.itsYourTurn()) {
 			if (game.getPhase() == TurnPhase.REINFORCEMENT)
 				if (picked.contains(card)) {
+					card.deselect();
 					picked.remove(card);
 					game.setSubPhase(SubPhase.SELECTION);
+					client.send(game);
 				} else if (game.getSubPhase() == SubPhase.SELECTION && picked.size() < 3) {
+					card.select();
 					picked.add(card);
 					if (picked.size() == 3)
 						if (areTradable(picked))
-							game.setSubPhase(SubPhase.CARDS_TRADING);					
+							game.setSubPhase(SubPhase.CARDS_TRADING);	
+					client.send(game);
 				}
 		}
 	}
@@ -52,8 +56,11 @@ public class GameUpdater {
 			switch (game.getPhase()) {
 			
 			case REINFORCEMENT:
+				for (Card card: picked)
+					card.deselect();
 				picked.clear();
 				game.setSubPhase(SubPhase.SELECTION);
+				client.send(game);
 				break;
 			
 			case ATTACK_PHASE:
@@ -191,7 +198,6 @@ public class GameUpdater {
 					trade(game.getCurrentPlayer(), picked);
 					game.log(game.getCurrentPlayer().getName() + " traded a set of cards!");			
 				}
-				client.send(game);
 				break;
 				
 			case ATTACK_PHASE: 
@@ -217,7 +223,6 @@ public class GameUpdater {
 						game.setSubPhase(SubPhase.SELECTION);
 						game.log(game.getCurrentPlayer().getName() + " attack another country or go to fortufy phase");
 					}				
-					client.send(game);
 					game.stopRolling();
 					break;
 					
@@ -227,14 +232,12 @@ public class GameUpdater {
 					game.log(game.getCurrentPlayer().getName() + ", attack another country or go to fortify phase");
 					game.setPhase(TurnPhase.ATTACK_PHASE);
 					game.setSubPhase(SubPhase.SELECTION);
-					client.send(game);
 					break;
 					
 				default: // Goes to fortify phase
 					nextPhase();
 					game.getCurrentPlayer().addCard(game.getDeck().draw());
 					game.log(game.getCurrentPlayer().getName() + ", fortify a country or end turn");
-					client.send(game);
 					break;
 				}
 				break;
@@ -247,13 +250,14 @@ public class GameUpdater {
 					game.log(game.getCurrentPlayer().getName() + ", trade your cards or reinforce your territories");
 				else
 					game.log(game.getCurrentPlayer().getName() + ", tap on a territory to reinforce it");
-				if (client.isMultiplayer())
+				if (!client.isMultiplayer())
 					client.setPlayer(game.getCurrentPlayer());
 				client.send(game);
 				break;
 			default:
 				break;	
 			}
+			client.send(game);
 		}
 	}
 	

@@ -13,7 +13,7 @@ public class AI extends Player {
 		this.name = name;
 		reset();		
 	}
-
+	
 	@Override
 	public boolean isHuman() {
 		return false;

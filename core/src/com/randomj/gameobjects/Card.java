@@ -7,6 +7,7 @@ public class Card {
 	private CardType type;
 	private int pattern;
 	private String text;
+	private boolean selected;
 	
 	public Card() {}
 	
@@ -14,10 +15,23 @@ public class Card {
 		this.country = country;
 		this.type = type;
 		this.pattern = pattern;
+		selected = false;
 		if (country == null)
 			text = "Wild card";
 		else
 			text = country.getName();
+	}
+	
+	public boolean isSelected() {
+		return selected;
+	}
+	
+	public void select() {
+		selected = true;
+	}
+	
+	public void deselect() {
+		selected = false;
 	}
 	
 	public boolean isWildCard() {
